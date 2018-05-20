@@ -1,0 +1,43 @@
+
+  test_actionable_notify:
+    alias: 'Test iOS Garage Actionable Notification'
+    sequence:
+      - service: notify.ios_iphonex_chris
+        data:
+          message:  'Garage Door Still Open'
+          data:
+            push:
+              badge: 0
+              category: "garagepush"
+            action_data:
+              entity_id: switch.garage_door_relay
+
+  emulated_hue_garage_door:
+    sequence:
+      - service: switch.turn_on
+        entity_id: switch.garage_door_relay
+      - delay: 00:00:01
+      - service: switch.turn_off
+        entity_id: switch.garage_door_relay
+
+  sonos_say:
+    alias: "Sonos TTS script"
+    sequence:
+     - service: media_player.sonos_snapshot
+       data_template:
+         entity_id: "{{ sonos_entity }}"
+     - service: media_player.sonos_unjoin
+       data_template:
+         entity_id: "{{ sonos_entity }}"
+     - service: media_player.volume_set
+       data_template:
+         entity_id: "{{ sonos_entity }}"
+         volume_level: "{{ volume }}"
+     - service: tts.google_say
+       data_template:
+         entity_id: "{{ sonos_entity }}"
+         message: "{{ message }}"
+     - delay: "{{ delay }}"
+     - service: media_player.sonos_restore
+       data_template:
+         entity_id: "{{ sonos_entity }}"

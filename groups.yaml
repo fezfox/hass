@@ -1,0 +1,111 @@
+#############################################################
+# cards
+#############################################################
+  default_view:
+    view: yes
+    name: Home
+    icon: mdi:home
+    entities:
+      - group.garage_cover
+      - group.temperatures
+      - history_graph.temperatures
+      - group.activity
+#      - group.timetables
+#      - group.presence_detection
+#      - group.car
+
+  # presence_view:
+  #   view: yes
+  #   name: Presence
+  #   icon: mdi:account-multiple
+  #   entities:
+  #     - group.presence_detection
+
+  media_view:
+    view: yes
+    name: Media
+    icon: mdi:play-network
+    entities:
+      - media_player.spotify
+
+  # automations_view:
+  #   view: yes
+  #   name: Automations
+  #   icon: mdi:settings
+  #   entities:
+  #     - group.all_automations
+
+  data_view:
+    view: yes
+    name: Data
+    icon: mdi:settings
+    entities:
+      - group.data
+
+  scripts_view:
+    view: yes
+    name: Scripts
+    icon: mdi:code-tags
+    entities:
+      - script.test_actionable_notify
+
+#############################################################
+# groups
+#############################################################
+  garage_cover:
+    name: "Garage Door"
+    view: no
+    icon: mdi:garage
+    entities:
+      - cover.garage_door_cover
+      - sensor.garage_door_state
+
+  data:
+    name: "Data"
+    view: no
+    entities:
+      - switch.garage_door_relay
+      - binary_sensor.garage_open_sensor
+      - binary_sensor.garage_closed_sensor
+      # - sensor.chris_occupancy_confidence
+      # - sensor.seema_occupancy_confidence
+      # - sensor.satsuki_occupancy_confidence
+      # - sensor.misaki_occupancy_confidence
+      # - sensor.misaki_ground_confidence
+      # - sensor.misaki_pool_confidence
+
+  # presence_detection:
+  #   name: "Presence"
+  #   view: no
+  #   entities:
+  #     - sensor.chris_location
+  #     - sensor.satsuki_location
+  #     - sensor.misaki_location
+
+#  car:
+#    name: "328i"
+#    view: no
+#    entities:
+#      - sensor.328i_mileage
+#      - sensor.328i_remaining_fuel
+#      - sensor.328i_remaining_range_fuel
+#      - device_tracker.328i
+
+  temperatures:
+    name: "Temperatures"
+    view: no
+    entities:
+      - sensor.swimming_pool_temperature
+
+  activity:
+    name: "Fitbit"
+    view: no
+    entities:
+      -  sensor.steps
+      -  sensor.charge_2_battery
+
+  # timetables:
+  #   name: "Timetables"
+  #   view: no
+  #   entities:
+  #     - sensor.bus_timetable

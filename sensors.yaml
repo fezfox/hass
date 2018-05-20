@@ -1,0 +1,236 @@
+#############################################################
+# garage door
+#############################################################
+
+  - platform: template
+    sensors:
+      garage_door_state:
+        value_template: >-
+          {% if states.input_boolean.garage_stopped.state == 'on' %}
+            Stopped
+          {% elif states.input_boolean.garage_opening.state == 'on' %}
+            Opening
+          {% elif states.input_boolean.garage_closing.state == 'on' %}
+            Closing
+          {% elif states.binary_sensor.garage_closed_sensor.state == 'on' %}
+            Closed
+          {% elif states.binary_sensor.garage_open_sensor.state == 'on' %}
+            Open
+          {% else %}
+            Stopped
+          {% endif %}
+        icon_template: >-
+          {% if states.input_boolean.garage_stopped.state == 'on' %}
+            mdi:garage-alert
+          {% elif states.input_boolean.garage_opening.state == 'on' %}
+            mdi:garage-open
+          {% elif states.input_boolean.garage_closing.state == 'on' %}
+            mdi:garage-open
+          {% elif states.binary_sensor.garage_closed_sensor.state == 'on' %}
+            mdi:garage
+          {% elif states.binary_sensor.garage_open_sensor.state == 'on' %}
+            mdi:garage-open
+          {% else %}
+            mdi:garage-alert
+          {% endif %}
+
+#############################################################
+# pool
+#############################################################
+
+  - platform: mqtt
+    state_topic: "pool/temperature"
+    name: "Swimming Pool Temperature"
+    unit_of_measurement: "°C"
+
+#############################################################
+# presence - ground
+#############################################################
+
+  # - platform: mqtt
+  #   state_topic: 'location/owner/ground/34:08:BC:61:C2:14'
+  #   value_template: '{{ value_json.confidence }}'
+  #   name: 'Chris Ground Confidence'
+
+  # - platform: mqtt
+  #   state_topic: 'location/owner/ground/78:7E:61:36:75:8F'
+  #   value_template: '{{ value_json.confidence }}'
+  #   name: 'Seema Occupancy Confidence'
+
+  # - platform: mqtt
+  #   state_topic: 'location/owner/ground/10:41:7F:3C:91:2A'
+  #   value_template: '{{ value_json.confidence }}'
+  #   name: 'Misaki Ground Confidence'
+
+  # - platform: mqtt
+  #   state_topic: 'location/owner/ground/58:E2:8F:C5:EA:16'
+  #   value_template: '{{ value_json.confidence }}'
+  #   name: 'Satsuki Occupancy Confidence'
+
+#############################################################
+# presence - pool
+#############################################################
+
+  # - platform: mqtt
+  #   state_topic: 'location/owner/pool/34:08:BC:61:C2:14'
+  #   value_template: '{{ value_json.confidence }}'
+  #   name: 'Chris Pool Confidence'
+
+  # - platform: mqtt
+  #   state_topic: 'location/owner/pool/10:41:7F:3C:91:2A'
+  #   value_template: '{{ value_json.confidence }}'
+  #   name: 'Misaki Pool Confidence'
+
+#############################################################
+# presence - min_max
+#############################################################
+
+  # - platform: min_max
+  #   name: "Chris Occupancy Confidence"
+  #   type: mean
+  #   round_digits: 0
+  #   entity_ids:
+  #     - sensor.chris_ground_confidence
+  #     - sensor.chris_pool_confidence
+
+  # - platform: min_max
+  #   name: "Misaki Occupancy Confidence"
+  #   type: mean
+  #   round_digits: 0
+  #   entity_ids:
+  #     - sensor.misaki_ground_confidence
+  #     - sensor.misaki_pool_confidence
+
+#############################################################
+# presence - location
+#############################################################
+
+
+  # - platform: template
+  #   sensors:
+  #     chris_location:
+  #       value_template: '{{ states.input_select.chris_status_dropdown.state }}'
+  #       friendly_name: 'Chris'
+  #       icon_template: >-
+  #         {% if states.input_boolean.chris_occupancy.state == 'on' %}
+  #           mdi:home-account
+  #         {% else %}
+  #           mdi:home-outline
+  #         {% endif %}
+
+  # - platform: template
+  #   sensors:
+  #     satsuki_location:
+  #       friendly_name: "Satsuki"
+  #       value_template:  >-
+  #         {% if states.input_boolean.satsuki_occupancy.state == 'on' %}
+  #         Home
+  #         {% else %}
+  #         Away
+  #         {% endif %}
+  #       icon_template: >-
+  #         {% if states.input_boolean.satsuki_occupancy.state == 'on' %}
+  #           mdi:home-account
+  #         {% else %}
+  #           mdi:home-outline
+  #         {% endif %}
+
+  # - platform: template
+  #   sensors:
+  #     misaki_location:
+  #       friendly_name: "Misaki"
+  #       value_template:  >-
+  #         {% if states.input_boolean.misaki_occupancy.state == 'on' %}
+  #         Home
+  #         {% else %}
+  #         Away
+  #         {% endif %}
+  #       icon_template: >-
+  #         {% if states.input_boolean.misaki_occupancy.state == 'on' %}
+  #           mdi:home-account
+  #         {% else %}
+  #           mdi:home-outline
+  #         {% endif %}
+
+#############################################################
+# bus
+#############################################################
+
+  # - platform: transport_nsw
+  #   name: 'Bus 389 Moncur'
+  #   stopid: '202530'
+  #   route: '389'
+  #   apikey: !secret transport_nsw_api_key
+
+  # - platform: template
+  #   sensors:
+  #     bus_timetable:
+  #       friendly_name: "Moncur Street 389"
+  #       icon_template: mdi:bus
+  #       value_template: >-
+  #         {% if is_state_attr('sensor.bus_389_moncur', 'due_in', 'n/a') %}
+  #           No schedule found
+  #         {% else %}           
+  #           {% set time = states.sensor.bus_389_moncur.attributes.due %}
+  #           {% set minutes = (time % 60) | int %}
+  #           {% set hours = (time / 60) | int %}
+  #           {%- if hours > 0 -%}
+  #             Next in {{ hours }} hours
+  #           {% else %}
+  #             Next in {{ minutes }} minute{%- if minutes > 1 -%}s{%- endif -%}
+  #           {% endif %}
+  #         {% endif %}
+#            Next in {{ states.sensor.bus_389_moncur.attributes.due }} minutes
+
+#############################################################
+# gmail
+#############################################################
+
+  - platform: imap
+    name: email_personal
+    server: imap.gmail.com
+    port: 993
+    username: !secret gmail_username
+    password: !secret gmail_password
+
+#############################################################
+# fitbit
+#############################################################
+
+  - platform: fitbit
+    name: fitbit
+    clock_format: 24H
+    monitored_resources:
+      - "activities/steps"
+      - "devices/battery"
+
+#############################################################
+# HA update
+#############################################################
+
+
+  - platform: rest
+    resource: https://raw.githubusercontent.com/home-assistant/hassio/dev/version.json
+    name: HA Latest Version
+    value_template: '{{ value_json.homeassistant }}'
+
+  - platform: version
+    name: HA Installed Version
+
+  - platform: template
+    sensors:
+      ha_update_available:
+        value_template: >-
+          {%- if states.sensor.ha_latest_version.state != "unavailable" -%}
+            {%- if states.sensor.ha_latest_version.state != states.sensor.ha_installed_version.state and "b" not in states.sensor.ha_latest_version.state -%}
+              Yes
+            {%- else -%}
+              No
+            {%- endif -%}
+          {%- endif -%}
+        icon_template: >-
+          {%- if states.sensor.ha_latest_version.state != states.sensor.ha_installed_version.state -%}
+            mdi:alert-box
+          {% else %}
+            mdi:approval
+          {% endif %}

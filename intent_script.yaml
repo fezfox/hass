@@ -1,0 +1,97 @@
+  PoolTemperatureIntent:
+    speech:
+      type: ssml
+      text: >
+        <speak>
+        {%- if states("sensor.pool_temperature") =="unknown" -%}
+        The pool temperature is unknown right now - ask again in a few minutes
+        {%- else -%}
+        The pool temperature is
+        {{ states("sensor.pool_temperature") }}
+        degrees
+        <break strength="medium" />
+        {%- if states("sensor.pool_temperature") | float > 28.0 -%}
+        It's the perfect temperature for a swim!
+        {%- elif states("sensor.pool_temperature") | float > 26.0 -%}
+        Quite nice for a dip!
+        {%- else -%}
+        A bit too cool for swimming.
+        {%- endif -%}     
+        {%- endif -%}
+        </speak>
+
+  StatusGarageDoorIntent:
+    speech:
+      type: ssml
+      text: >-
+        <speak>
+        {%- if is_state("binary_sensor.garage_closed_sensor", "on") -%}
+        The garage door is closed.
+        {%- elif is_state("binary_sensor.garage_open_sensor", "on") -%}
+        The garage door is open.
+        {%- else -%}
+        The garage door is stopped.
+        {%- endif -%}
+        </speak>
+
+  OpenGarageDoorIntent:
+    speech:
+      type: ssml
+      text: >-
+        <speak>
+        {%- if is_state("binary_sensor.garage_closed_sensor", "on") -%}
+        OK, opening the garage door.
+        {%- elif is_state("binary_sensor.garage_open_sensor", "on") -%}
+        The garage door is already open.
+        {%- else -%}
+        The garage door is stopped.
+        {%- endif -%}
+        </speak>
+    action:
+        service_template: >
+          {%- if is_state("binary_sensor.garage_closed_sensor", "on") -%}
+            switch.turn_on
+          {%- elif is_state("binary_sensor.garage_open_sensor", "off") and is_state("binary_sensor.garage_closed_sensor", "off")-%}
+            switch.turn_on
+          {%- endif -%}
+        data_template:
+          entity_id: switch.garage_door_relay
+
+  CloseGarageDoorIntent:
+    speech:
+      type: ssml
+      text: >-
+        <speak>
+        {%- if is_state("binary_sensor.garage_open_sensor", "on") -%}
+        OK, closing the garage door.
+        {%- elif is_state("binary_sensor.garage_closed_sensor", "on") -%}
+        The garage door is already closed.
+        {%- else -%}
+        The garage door is stopped.
+        {%- endif -%}
+        </speak>
+    action:
+        service_template: >
+          {%- if is_state("binary_sensor.garage_open_sensor", "on") -%}
+            switch.turn_on
+          {%- elif is_state("binary_sensor.garage_open_sensor", "off") and is_state("binary_sensor.garage_closed_sensor", "off")-%}
+            switch.turn_on
+          {%- endif -%}
+        data_template:
+          entity_id: switch.garage_door_relay
+
+  BusTimeIntent:
+    speech:
+      type: plain
+      text: >-   
+        {% set time = states.sensor.bus_389_moncur.attributes.due %}
+        {% set minutes = (time % 60) | int %}
+        {% set hours = (time / 60) | int %}
+        The next bus is due in
+        {%- if hours > 0 -%}
+            {{ hours }} hour{%- if hours > 1 -%}s{%- endif -%}    
+        {%- endif -%}
+        {%- if minutes > 0 -%}
+            {{ minutes }} minute{%- if minutes > 1 -%}s{%- endif -%}         
+        {%- endif -%}
+#        The next bus is due in {{ states.sensor.bus_389_moncur.attributes.due }} minutes.

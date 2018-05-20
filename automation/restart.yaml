@@ -1,0 +1,67 @@
+#############################################################
+# HASS restart - notify
+#############################################################
+
+- id: hass_startup_notification
+  hide_entity: true
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+#    - service: notify.twilio_sms
+#      data_template:
+#        target: '+61410636096'
+#        message: "Home Assistant startup complete"
+    - service: notify.ios_iphonex_chris
+      data:
+        title: "Message from Home Assistant"
+        message: "Startup Complete"
+
+#############################################################
+# HASS restart - set occupancy
+#############################################################
+
+- id: hass_startup_set_occupancy_chris
+  hide_entity: true
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.chris_occupancy_confidence
+        above: 10
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.chris_occupancy
+
+- id: hass_startup_set_occupancy_satsuki
+  hide_entity: true
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.satsuki_occupancy_confidence
+        above: 10
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.satsuki_occupancy
+
+- id: hass_startup_set_occupancy_misaki
+  hide_entity: true
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition:
+    condition: and
+    conditions:
+      - condition: numeric_state
+        entity_id: sensor.misaki_occupancy_confidence
+        above: 10
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.misaki_occupancy

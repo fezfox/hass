@@ -1,0 +1,17 @@
+  cover.garage_door_cover:
+      friendly_name: Garage Door Opener
+      device_class: garage
+
+  group.all_automations:
+      hidden: false
+
+  sensor.garage_door_state:
+    friendly_name: 'Garage Door State'
+
+  script.emulated_hue_garage_door:
+    friendly_name: 'garage door'
+    emulated_hue_hidden: false
+    emulated_hue_name: 'garage door'
+
+  sensor.charge_2_battery:
+    friendly_name: 'Battery Level'

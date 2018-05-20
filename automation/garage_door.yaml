@@ -1,0 +1,157 @@
+#############################################################
+# detect garage door state changes
+#############################################################
+
+# OPENING
+- id: garage_door_opening
+  alias: 'Detect Garage Door Opening'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.garage_closed_sensor
+    to: 'off'
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.garage_opening
+
+- id: garage_door_open_complete
+  alias: 'Detect Garage Door Opened'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.garage_open_sensor
+    to: 'on'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_opening
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_closing
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_stopped
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_stopped_on_open
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_stopped_on_close
+
+# CLOSING
+- id: garage_door_closing
+  alias: 'Detect Garage Door Closing'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.garage_open_sensor
+    to: 'off'
+  action:
+    service: input_boolean.turn_on
+    entity_id: input_boolean.garage_closing
+
+
+- id: garage_door_close_complete
+  alias: 'Detect Garage Door Closed'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.garage_closed_sensor
+    to: 'on'
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_closing
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_opening
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_stopped
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_stopped_on_open
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.garage_stopped_on_close
+
+# STOPPED
+- id: garage_door_stopped_while_opening
+  alias: 'Detect Garage Door Stopped While Opening'
+  trigger:
+    platform: state
+    entity_id: input_boolean.garage_opening
+    to: 'on'
+    for:
+      seconds: 30
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.garage_stopped
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.garage_stopped_on_open
+
+- id: garage_door_stopped_while_closing
+  alias: 'Detect Garage Door Stopped While Closing'
+  trigger:
+    platform: state
+    entity_id: input_boolean.garage_closing
+    to: 'on'
+    for:
+      seconds: 30
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.garage_stopped
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.garage_stopped_on_close
+
+#############################################################
+# detect garage door open for a long period
+#############################################################
+- id: garage_door_open_prolonged
+  alias: 'Garage Door Open Prolonged'
+  trigger:
+    platform: state
+    entity_id: binary_sensor.garage_closed_sensor
+    to: 'off'
+    for:
+      minutes: 5
+  action:
+  - service: notify.twilio_sms
+    data_template:
+      target: '+61410636096'
+      message: "Home Assistant reports garage door open for more than 5 minutes"
+  - service: notify.ios_iphonex_chris
+    data:
+      message: "Home Assistant reports garage door open for more than 5 minutes"
+      data:
+        push:
+          badge: 0
+          category: "garagepush"
+        action_data:
+          entity_id: switch.garage_door_relay
+  - service: script.sonos_say
+    data:
+      sonos_entity: media_player.study
+      volume: 0.2
+      message: "Home Assistant reports garage door open for more than 5 minutes"
+      delay: '00:00:05'
+
+#############################################################
+# iOS app button to close the door
+#############################################################
+- id: garage_door_ios_close
+  alias: 'iOS close Garage Door Button'
+  initial_state: 'on'
+  trigger:
+    - platform: event
+      event_type: ios.notification_action_fired
+      event_data:
+        actionName: CLOSEGARAGEDOOR
+  action:
+    - service: switch.turn_on
+      entity_id: switch.garage_door_relay
+    - delay: 00:00:00:20
+    - service: switch.turn_off
+      entity_id: switch.garage_door_relay
+
+#############################################################
+# when garage door switch turns on, turn off 200ms after
+#############################################################
+
+- id: garage_door_toggle
+  alias: 'Garage Door Toggle'
+  trigger:
+    platform: state
+    entity_id: switch.garage_door_relay
+    to: 'on'
+    for:
+      milliseconds: 200
+  action:
+    service: switch.turn_off
+    entity_id: switch.garage_door_relay
