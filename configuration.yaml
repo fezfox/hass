@@ -30,7 +30,7 @@ updater:
 #discovery:
 
 #hass.io menu
-hassio:
+# hassio:
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
