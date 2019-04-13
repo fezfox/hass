@@ -248,15 +248,15 @@ input_boolean:
 #############################################################
 
 lametric:
-  client_id: !secret lametric_id
-  client_secret: !secret lametric_token
+  client_id: !secret lametric_client_id
+  client_secret: !secret lametric_client_secret
 
 #############################################################
 # twilio
 #############################################################
 twilio:
-  account_sid: !secret twilio_sid
-  auth_token: !secret twilio_token
+  account_sid: !secret twilio_account_sid
+  auth_token: !secret twilio_auth_token
 
 emulated_hue:
   host_ip: 10.0.0.52

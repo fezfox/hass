@@ -4,9 +4,9 @@
 - id: pool_temperature_la_metric
   alias: 'Notify Pool Temp La Metric'
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
-    seconds: 00
+    seconds: 0
   action:
   - service: notify.lametric_notify_long
     data:
@@ -27,7 +27,7 @@
 - id: fitbit_la_metric_steps
   alias: 'Notify La Metric Fitbit Steps'
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
     seconds: 30
   action:
@@ -43,7 +43,7 @@
 
 - id: fitbit_la_metric_battery_high
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
     seconds: 40
   condition:
@@ -59,7 +59,7 @@
 
 - id: fitbit_la_metric_battery_medium
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
     seconds: 40
   condition:
@@ -75,7 +75,7 @@
 
 - id: fitbit_la_metric_battery_low
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
     seconds: 40
   condition:
@@ -91,7 +91,7 @@
 
 - id: fitbit_la_metric_battery_empty
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
     seconds: 40
   condition:
@@ -111,7 +111,7 @@
 - id: gmail_count_la_metric
   alias: 'Gmail Count La Metric'
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/1'
     seconds: 0
   condition:
@@ -157,7 +157,7 @@
 - id: lametric_ha_version_update
   alias: "HA New Version La Metric"
   trigger:
-  - platform: time
+  - platform: time_pattern
     minutes: '/5'
     seconds: 50
   condition:
